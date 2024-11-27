@@ -12369,6 +12369,28 @@ fn parse_create_table_select() {
 }
 
 #[test]
+fn test_period_map_access() {
+    let supported_dialects = TestedDialects::new(vec![
+        Box::new(GenericDialect {}),
+        Box::new(DuckDbDialect {}),
+    ]);
+    let sqls = [
+        "SELECT abc[1] FROM t",
+        "SELECT abc[1].f1 FROM t",
+        "SELECT abc[1].f1.f2 FROM t",
+        "SELECT f1.abc[1] FROM t",
+        "SELECT f1.f2.abc[1] FROM t",
+        "SELECT f1.abc[1].f2 FROM t",
+        "SELECT abc['a'][1].f1 FROM t",
+        "SELECT abc['a'].f1[1].f2 FROM t",
+        "SELECT abc['a'].f1[1].f2[2] FROM t",
+    ];
+    for sql in sqls {
+        supported_dialects.verified_stmt(sql);
+    }
+}
+
+#[test]
 fn test_reserved_keywords_for_identifiers() {
     let dialects = all_dialects_where(|d| d.is_reserved_for_identifier(Keyword::INTERVAL));
     // Dialects that reserve the word INTERVAL will not allow it as an unquoted identifier

@@ -676,6 +676,15 @@ pub trait Dialect: Debug + Any {
         false
     }
 
+    /// Return true if the dialect supports the period map access key
+    ///
+    /// Access on BigQuery nested and repeated expressions can
+    /// mix notations in the same expression.
+    /// <https://cloud.google.com/bigquery/docs/nested-repeated#query_nested_and_repeated_columns>
+    fn support_period_map_access_key(&self) -> bool {
+        false
+    }
+
     /// Returns true if the dialect supports PartiQL for querying semi-structured data
     /// <https://partiql.org/index.html>
     fn supports_partiql(&self) -> bool {
